@@ -194,11 +194,13 @@ def test_success_is_quiet_and_creates_report(tmp_path):
 
 
 def test_existing_compact_json_suffix_is_preserved(tmp_path):
-    """题面：「计数率单必须是一行紧凑 JSON，末尾单个 LF，成员和顺序固定：」；"""
+    """题面：「计数率单不是 JSONL：整个文件只有一个 JSON 对象和一个物理行，该行承载上面九个顶层字段」；"""
     document, _ = make_document()
     result, _, target, _ = invoke(tmp_path, document)
     raw = target.read_bytes()
+    parsed = json.loads(raw)
     assert result.returncode == 0 and raw.endswith(b"\n") and raw.count(b"\n") == 1
+    assert isinstance(parsed, dict) and len(parsed) == 9
 
 
 def test_report_has_exact_ordered_keys(tmp_path):

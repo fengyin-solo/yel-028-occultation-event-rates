@@ -91,7 +91,7 @@ rate_standard_error_cps
 ci_low_cps
 ci_high_cps
 ```
-每个物理行只承载四个字段，序列化为紧凑 JSON，并以一个 LF 结束：；`status` 写 `complete`；`event_order` 按 `event_id` 升序；两个事件数组按 `event_order` 对齐，事件内部曝光引用保持升序；返回码 0 的路径保持 stdout 和 stderr 空白； 追加流水是一份 UTF-8 JSONL；
+计数率单不是 JSONL：整个文件只有一个 JSON 对象和一个物理行，该行承载上面九个顶层字段，序列化为紧凑 JSON，并以一个 LF 结束。追加流水才是 UTF-8 JSONL，每行恰好承载下面四个字段，同样使用紧凑 JSON 和单个 LF：；`status` 写 `complete`；`event_order` 按 `event_id` 升序；两个事件数组按 `event_order` 对齐，事件内部曝光引用保持升序；返回码 0 的路径保持 stdout 和 stderr 空白；
 ```text
 mission_id
 input_sha256
