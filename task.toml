@@ -1,0 +1,27 @@
+schema_version = "1.3"
+
+[task]
+name = "local/occultation-event-rates"
+authors = [{ name = "fengyin" }]
+description = "Recover unlabeled occultation-event exposure membership from frame counts and photon totals, then calculate a sky-area weighted count-rate interval."
+keywords = ["astronomy", "occultation", "photon-rate", "partition-recovery"]
+
+[agent]
+timeout_sec = 3600
+
+[environment]
+build_timeout_sec = 600
+cpus = 2
+memory_mb = 2048
+storage_mb = 4096
+gpus = 0
+allow_internet = true
+
+[verifier]
+timeout_sec = 600
+
+[metadata]
+difficulty = "hard"
+category = "astronomy"
+tags = ["occultation-event", "photon-rate", "hidden-membership", "append-only-ledger"]
+expert_time_estimate = "85m"

@@ -1,0 +1,167 @@
+{
+  "schema_version": 1,
+  "gate_tests": [
+    "test_outputs.py::test_hidden_partition_is_recovered",
+    "test_outputs.py::test_survey_mean_rate_cps_uses_sky_area_sq_deg_shares",
+    "test_outputs.py::test_rate_standard_error_cps_uses_effective_sample_size",
+    "test_outputs.py::test_ledger_has_exact_four_key_line",
+    "test_outputs.py::test_inconsistent_aggregate_reports_bad_model",
+    "test_outputs.py::test_boolean_frame_count_is_refused",
+    "test_outputs.py::test_mission_identifier_prefix_is_refused",
+    "test_outputs.py::test_invalid_event_identifier_is_refused",
+    "test_outputs.py::test_night_identifier_with_surrounding_space_is_refused",
+    "test_outputs.py::test_duplicate_exposure_reference_is_refused",
+    "test_outputs.py::test_calibration_extra_key_is_refused",
+    "test_outputs.py::test_three_night_inputs_produce_report",
+    "test_outputs.py::test_five_events_are_accepted",
+    "test_outputs.py::test_event_order_follows_identifier_order",
+    "test_outputs.py::test_lexicographic_normalization_is_stable",
+    "test_outputs.py::test_event_arrays_follow_identifier_order",
+    "test_outputs.py::test_member_references_are_sorted_within_event",
+    "test_outputs.py::test_ledger_is_append_only_jsonl",
+    "test_outputs.py::test_missing_result_parent_reports_io_failure",
+    "test_outputs.py::test_conflicting_ledger_digest_is_refused"
+  ],
+  "weight_policy": {
+    "version": 1,
+    "basis": "business_priority",
+    "core_min_share": 0.5
+  },
+  "tests": {
+    "test_outputs.py::test_success_is_quiet_and_creates_report": {
+      "priority": "supporting",
+      "weight": 0.017,
+      "rationale": "成功路径必须安静地产出复核单，否则自动交付无法确认任务已经完成。"
+    },
+    "test_outputs.py::test_existing_compact_json_suffix_is_preserved": {
+      "priority": "schema",
+      "weight": 0.017,
+      "rationale": "原有紧凑单行与尾换行是下游解析器依赖的稳定序列化外观。"
+    },
+    "test_outputs.py::test_report_has_exact_ordered_keys": {
+      "priority": "schema",
+      "weight": 0.017,
+      "rationale": "复核单字段顺序被固定后，跨批次归档和逐字节比对才能成立。"
+    },
+    "test_outputs.py::test_input_order_does_not_change_business_bytes": {
+      "priority": "core",
+      "weight": 0.123,
+      "rationale": "隐藏归属必须由汇总约束恢复，不能随导出行顺序改变最终结果。"
+    },
+    "test_outputs.py::test_event_rate_cps_use_published_exposure_totals": {
+      "priority": "core",
+      "weight": 0.123,
+      "rationale": "各层加权均值是总体估计和方差计算的共同基础，不能按未加权人数平均。"
+    },
+    "test_outputs.py::test_confidence_interval_uses_declared_z_score": {
+      "priority": "core",
+      "weight": 0.123,
+      "rationale": "区间端点只能使用交付前锁定的标准倍数，不能根据目标置信度临时替换。"
+    },
+    "test_outputs.py::test_analysis_confidence_is_validated_but_not_used_as_z": {
+      "priority": "boundary",
+      "weight": 0.017,
+      "rationale": "置信水平是业务审计字段，与实际计算倍数分离可避免口径漂移。"
+    },
+    "test_outputs.py::test_minimum_exposure_boundary_is_accepted": {
+      "priority": "boundary",
+      "weight": 0.017,
+      "rationale": "公开下限必须可运行，防止实现通过排除最小合法批次来规避复杂归属。"
+    },
+    "test_outputs.py::test_maximum_exposure_boundary_is_accepted": {
+      "priority": "boundary",
+      "weight": 0.017,
+      "rationale": "公开上限必须真实完成，确保恢复算法不是只覆盖演示用的小输入。"
+    },
+    "test_outputs.py::test_eleven_exposures_are_refused": {
+      "priority": "boundary",
+      "weight": 0.017,
+      "rationale": "最小越界批次应直接拒收，避免不完整调查进入正式统计报告。"
+    },
+    "test_outputs.py::test_extra_top_level_key_is_refused": {
+      "priority": "schema",
+      "weight": 0.017,
+      "rationale": "顶层精确键集合阻止未审计业务字段混入正式调查材料。"
+    },
+    "test_outputs.py::test_missing_exposure_key_is_refused": {
+      "priority": "schema",
+      "weight": 0.017,
+      "rationale": "面板逐层缺键必须拒收，不能把默认权重或空回答带入估计。"
+    },
+    "test_outputs.py::test_duplicate_json_key_is_refused": {
+      "priority": "schema",
+      "weight": 0.017,
+      "rationale": "重复键会令不同解析器得到不同调查编号，必须按原始字节关闭入口。"
+    },
+    "test_outputs.py::test_photon_length_mismatch_is_refused": {
+      "priority": "boundary",
+      "weight": 0.017,
+      "rationale": "回答数必须与户数逐面板相等，否则加权方差会遗漏或虚构受访者。"
+    },
+    "test_outputs.py::test_boolean_photon_is_refused": {
+      "priority": "boundary",
+      "weight": 0.017,
+      "rationale": "满意度回答的布尔类型不能作为零一分数值进入统计计算。"
+    },
+    "test_outputs.py::test_event_exposure_count_must_sum_to_exposure_total": {
+      "priority": "boundary",
+      "weight": 0.017,
+      "rationale": "各层面板数必须覆盖全部面板，否则归属恢复会静默丢失样本。"
+    },
+    "test_outputs.py::test_wrong_tie_break_is_refused": {
+      "priority": "schema",
+      "weight": 0.017,
+      "rationale": "并列归属规则固定后，同一调查在不同机器上才能给出稳定业务结果。"
+    },
+    "test_outputs.py::test_repeated_success_keeps_ledger_bytes": {
+      "priority": "core",
+      "weight": 0.123,
+      "rationale": "同一输入重复交付必须幂等，防止交班重跑造成重复结算记录。"
+    },
+    "test_outputs.py::test_distinct_input_appends_in_success_order": {
+      "priority": "core",
+      "weight": 0.125,
+      "rationale": "不同调查批次要按成功顺序追加，并各自保留可核验的输入结果摘要。"
+    },
+    "test_outputs.py::test_bad_ledger_is_refused_without_replacing_report": {
+      "priority": "recovery",
+      "weight": 0.02,
+      "rationale": "坏台账必须阻止发布并保留旧报告，避免交付状态只更新一半。"
+    },
+    "test_outputs.py::test_ledger_parent_failure_preserves_old_result": {
+      "priority": "recovery",
+      "weight": 0.02,
+      "rationale": "台账目录不可写时旧报告必须保持字节不变，满足双目标事务要求。"
+    },
+    "test_outputs.py::test_input_file_is_not_modified": {
+      "priority": "recovery",
+      "weight": 0.017,
+      "rationale": "调查原始输入是不可变审计材料，任何成功运行都不能回写源文件。"
+    },
+    "test_outputs.py::test_success_leaves_no_staging_files": {
+      "priority": "recovery",
+      "weight": 0.02,
+      "rationale": "成功发布后的暂存残留会干扰下一次目录扫描并破坏交付卫生。"
+    },
+    "test_outputs.py::test_repeat_without_ledger_is_byte_stable": {
+      "priority": "recovery",
+      "weight": 0.017,
+      "rationale": "无台账模式重复执行也应保持报告字节稳定，支撑调查结果复验。"
+    },
+    "test_outputs.py::test_missing_input_is_bad_input": {
+      "priority": "recovery",
+      "weight": 0.017,
+      "rationale": "读取不到调查材料时应按公开拒收码结束，不留下半成品报告。"
+    },
+    "test_outputs.py::test_failure_does_not_emit_traceback": {
+      "priority": "recovery",
+      "weight": 0.017,
+      "rationale": "失败终端不得泄露实现堆栈，以保持调查自动化接口稳定可解析。"
+    },
+    "test_outputs.py::test_maximum_group_shape_finishes_within_limit": {
+      "priority": "boundary",
+      "weight": 0.017,
+      "rationale": "四层满量面板需在运行时限内完成，证明恢复路径能覆盖公开最大规模。"
+    }
+  }
+}
