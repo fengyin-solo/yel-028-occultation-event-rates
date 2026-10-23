@@ -342,6 +342,19 @@ def test_night_identifier_with_surrounding_space_is_refused(tmp_path):
     document["night_id"] = " campaign "
     result, _, target, _ = invoke(tmp_path, document)
     assert result.returncode == 1 and result.stderr == "运行拒收: BAD_INPUT\n" and not target.exists()
+    minimum, _ = make_document()
+    minimum["night_id"] = "AB"
+    minimum_result, _, minimum_target, _ = invoke(tmp_path, minimum)
+    assert minimum_result.returncode == 0 and json.loads(minimum_target.read_text(encoding="utf-8"))["mission_id"] == minimum["mission_id"]
+    spaced, _ = make_document()
+    spaced["night_id"] = "A B"
+    spaced_result, _, spaced_target, _ = invoke(tmp_path, spaced)
+    assert spaced_result.returncode == 0 and json.loads(spaced_target.read_text(encoding="utf-8"))["mission_id"] == spaced["mission_id"]
+    spaced_bytes = spaced_target.read_bytes()
+    control, _ = make_document()
+    control["night_id"] = "A\tB"
+    control_result, _, control_target, _ = invoke(tmp_path, control)
+    assert control_result.returncode == 1 and control_result.stderr == "运行拒收: BAD_INPUT\n" and control_target.read_bytes() == spaced_bytes
 
 
 def test_duplicate_exposure_reference_is_refused(tmp_path):
